@@ -1,0 +1,380 @@
+---
+title: "Models"
+author: "Sarah Barnes"
+date: "2023-04-15"
+output: html_document
+---
+### Install Packages
+```{r}
+library(DHARMa)
+library(glmmTMB)
+library(compositions)
+library(robustbase)
+library(car)
+library(effects)
+library(MuMIn)
+library(emmeans)
+library(performance)
+library(ggplot2)
+```
+### Dataset Generation
+
+#### Load master dataset 
+
+```{r echo=T}
+load("master.RData")
+```
+#### General
+```{r}
+# subset data just for substrate data (aka no Hoop net)
+sub_only <- subset(master, perc_clay != "NA")
+
+# add a logCpue column for log-normal regression
+logCpue <- log(sub_only$matureallCpue + 0.08)
+sub_only <- cbind(sub_only, logCpue)
+
+## COMPLETE SUBSETS
+# all months, depths 1 & 2 only
+sub_depths <- subset(sub_only, depth_bin != 3)
+
+#all depths, months 5 & 6 only
+sub_months <- subset(sub_only, month != 7)
+
+## VEGETATION
+# subset to July for vegetation ( a full dataset)
+sub_june <- subset(sub_only, avg_vegheight != "NA" & month == 6)
+```
+  
+### --- DEPTH MODELS ---
+
+##### The reason for the subsets is that the study design is not balanced because we dropped some of the 30 m gill nets in 
+##### July.The uneven data biases the results towards the depths with more data.
+
+##### This applies both here with depth AND with the substrate and temperature models where
+##### I also use data across all of the months
+
+#### (1) Depth subset (all months, depths 1 & 2 only)
+```{r}
+# the model
+dep1 <- glmmTMB(logCpue ~ as.factor(depth_bin) + (1|site) + (1|site:depth_bin),
+                #offset = log(effort_hours),
+              family = gaussian,
+              data = sub_depths)
+summary(dep1)
+```
+
+#### QQ plot residuals
+```{r}
+dep1_resids <- simulateResiduals(dep1)
+plot(dep1_resids)
+```
+
+#### ANOVA results and R2
+
+##### I am not sure what to do with the random effects issue and the R2,it is throughout the models
+```{r}
+car::Anova(dep1)
+
+# check R2
+performance::r2(dep1)
+```
+
+#### Plots with Predicted Values
+```{r}
+# predict
+pdep1 <- predict(dep1, re.form=~0, type="link")
+
+# create data frame for plotting
+dep1_data <- data.frame(sub_depths, pdep1)
+
+# plots of predicted values against response (how well does the model predict?)
+ggplot(dep1_data,
+       aes(logCpue, pdep1)) +
+  geom_point() +
+  geom_abline(intercept = 0, slope = 1)
+
+# plots of predicted values against each predictor
+ggplot(dep1_data,
+       aes(as.factor(depth_bin), pdep1)) +
+  geom_boxplot()
+```
+
+### (2) Depth subset (all depths, months 5 & 6)
+```{r}
+# the model
+dep2 <- glmmTMB(logCpue ~ as.factor(depth_bin) + (1|site) + (1|site:depth_bin),
+                #offset = log(effort_hours),
+                family = gaussian,
+                data = sub_months)
+summary(dep2)
+```
+
+#### QQ plot residuals
+```{r}
+dep2_resids <- simulateResiduals(dep2)
+plot(dep2_resids)
+```
+
+#### ANOVA results and R2
+```{r}
+car::Anova(dep2)
+
+# check R2
+performance::r2(dep2)
+```
+
+#### Plots with Predicted Values
+```{r}
+pdep2 <- predict(dep2, re.form=~0, type="link")
+
+# create data frame for plotting
+dep2_data <- data.frame(sub_months, pdep2)
+
+# plots of predicted values against response (how well does the model predict?)
+ggplot(dep2_data,
+       aes(logCpue, pdep2)) +
+  geom_point() +
+  geom_abline(intercept = 0, slope = 1)
+
+# plots of predicted values against each predictor
+ggplot(dep2_data,
+       aes(as.factor(depth_bin), pdep2)) +
+  geom_boxplot()
+```
+
+### --- SUBSTRATE AND TEMP MODELS ---
+
+#### (1) All data, partial July set with 5, 30 M Gills missing
+```{r}
+# the model
+sub_temp_1 <- glmmTMB(logCpue ~ perc_clay + perc_silt + temp_avg + (1|site) + (1|site:depth_bin),
+                #offset = log(effort_hours),
+                family = gaussian,
+                data = sub_only)
+summary(sub_temp_1)
+```
+
+#### QQ plot residuals
+```{r}
+sub_temp_1_resids <- simulateResiduals(sub_temp_1)
+plot(sub_temp_1_resids)
+```
+
+#### ANOVA results and R2
+```{r}
+car::Anova(sub_temp_1)
+
+# check R2
+performance::r2(sub_temp_1)
+```
+
+#### Plots with Predicted Values
+```{r}
+psub_temp_1 <- predict(sub_temp_1, re.form=~0, type="link")
+
+# create data frame for plotting
+sub_temp_1_data <- data.frame(sub_only, psub_temp_1)
+
+# plots of predicted values against response (how well does the model predict?)
+ggplot(sub_temp_1_data,
+       aes(logCpue, psub_temp_1)) +
+  geom_point() +
+  geom_abline(intercept = 0, slope = 1)
+
+# plots of predicted values against each predictor
+ggplot(sub_temp_1_data,
+       aes(perc_silt, psub_temp_1)) +
+  geom_point() +
+  geom_smooth()
+
+ggplot(sub_temp_1_data,
+       aes(perc_clay, psub_temp_1)) +
+  geom_point() +
+  geom_smooth()
+
+ggplot(sub_temp_1_data,
+       aes(temp_avg, psub_temp_1)) +
+  geom_point() +
+  geom_smooth()
+```
+
+### (2)Subsetted on depth (aka all months but only depths 1 & 2)
+```{r}
+# the model
+sub_temp_2 <- glmmTMB(logCpue ~ perc_clay + perc_silt + temp_avg + (1|site) + (1|site:depth_bin),
+                    #offset = log(effort_hours),
+                    family = gaussian,
+                    data = sub_depths)
+summary(sub_temp_2)
+```
+
+#### QQ plot residuals
+```{r}
+sub_temp_2_resids <- simulateResiduals(sub_temp_2)
+plot(sub_temp_2_resids)
+```
+
+#### ANOVA results and R2
+```{r}
+car::Anova(sub_temp_2)
+
+# check R2
+performance::r2(sub_temp_2)
+```
+
+#### Plot with Predicted Values
+```{r}
+psub_temp_2 <- predict(sub_temp_2, re.form=~0, type="link")
+
+# create data frame for plotting
+sub_temp_2_data <- data.frame(sub_depths, psub_temp_2)
+
+# plots of predicted values against response (how well does the model predict?)
+ggplot(sub_temp_2_data,
+       aes(logCpue, psub_temp_2)) +
+  geom_point() +
+  geom_abline(intercept = 0, slope = 1)
+
+# plots of predicted values against each predictor
+ggplot(sub_temp_2_data,
+       aes(perc_silt, psub_temp_2)) +
+  geom_point() +
+  geom_smooth()
+
+ggplot(sub_temp_2_data,
+       aes(perc_clay, psub_temp_2)) +
+  geom_point() +
+  geom_smooth()
+
+ggplot(sub_temp_2_data,
+       aes(temp_avg, psub_temp_2)) +
+  geom_point() +
+  geom_smooth()
+```
+
+### (3) Subsetted on month (aka all depths but only months 5&6)
+
+##### I think the reason this is not significant ( in comparison to the other models), but the direction 
+##### of the predictors make sense, is that without the last month the data is much less zero-inflated 
+##### so it does not detect significance as readily
+
+```{r}
+# the model
+sub_temp_3 <- glmmTMB(logCpue ~ perc_clay + perc_silt + temp_avg + (1|site) + (1|site:depth_bin),
+                    #offset = log(effort_hours),
+                    family = gaussian,
+                    data = sub_depths)
+summary(sub_temp_3)
+```
+
+#### QQ plot residuals
+```{r}
+sub_temp_3_resids <- simulateResiduals(sub_temp_3)
+plot(sub_temp_3_resids)
+```
+
+#### ANOVA results and R2
+```{r}
+car::Anova(sub_temp_3)
+
+# check R2
+performance::r2(sub_temp_3)
+```
+
+#### Plot with Predicted Values
+```{r}
+psub_temp_3 <- predict(sub_temp_3, re.form=~0, type="link")
+
+# create data frame for plotting
+sub_temp_3_data <- data.frame(sub_depths, psub_temp_3)
+
+# plots of predicted values against response (how well does the model predict?)
+ggplot(sub_temp_3_data,
+       aes(logCpue, psub_temp_3)) +
+  geom_point() +
+  geom_abline(intercept = 0, slope = 1)
+
+# plots of predicted values against each predictor
+ggplot(sub_temp_3_data,
+       aes(perc_silt, psub_temp_3)) +
+  geom_point() +
+  geom_smooth()
+
+ggplot(sub_temp_3_data,
+       aes(perc_clay, psub_temp_3)) +
+  geom_point() +
+  geom_smooth()
+
+ggplot(sub_temp_3_data,
+       aes(temp_avg, psub_temp_3)) +
+  geom_point() +
+  geom_smooth()
+```
+
+### --- SUBSTRATE, TEMP & VEGETATION (june only) ---
+
+##### I feel like there should be a quadratic function for avg vegetation height
+##### but the residuals don't seem to support it
+
+```{r}
+# the model
+june <- glmmTMB(logCpue ~ perc_clay + perc_silt + temp_avg + avg_vegheight + (1|site),
+                      #offset = log(effort_hours),
+                      family = gaussian,
+                      data = sub_june)
+summary(june)
+```
+
+#### QQ plot residuals
+
+##### I can't figure out what is wrong with the top quantile, I thought it had to do with 
+##### the vegetation height data but it does not show up in the residuals just for vegetation height
+
+```{r}
+june_resids <- simulateResiduals(june)
+plot(june_resids)
+plotResiduals(june_resids, form=sub_june$temp_avg)
+```
+
+#### ANOVA results and R2
+```{r}
+car::Anova(june)
+
+# check R2
+performance::r2(june)
+```
+
+#### Plots of Predicted Values
+```{r}
+pJune <- predict(june, re.form=~0, type="link")
+
+# create data frame for plotting
+june_data <- data.frame(sub_june, pJune)
+
+# plots of predicted values against response (how well does the model predict?)
+ggplot(june_data,
+       aes(logCpue, pJune)) +
+  geom_point() +
+  geom_abline(intercept = 0, slope = 1)
+
+# plots of predicted values against each predictor
+ggplot(june_data,
+       aes(perc_silt, pJune)) +
+  geom_point() +
+  geom_smooth()
+
+ggplot(june_data,
+       aes(perc_clay, pJune)) +
+  geom_point() +
+  geom_smooth()
+
+ggplot(june_data,
+       aes(temp_avg, pJune)) +
+  geom_point() +
+  geom_smooth()
+
+ggplot(june_data,
+       aes(avg_vegheight, pJune)) +
+  geom_point() +
+  geom_smooth()
+```

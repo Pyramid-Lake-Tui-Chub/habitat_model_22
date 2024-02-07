@@ -1,0 +1,65 @@
+Site,Surface_Temp,Clarity,Conductivity,Weather,Month,Date
+ABY,13.7,5.7,8.07,"Sunny,Clear,Hot",5,2022-05-21
+ABY,17.8,8.44,8.25,"Sunny,Clear,Hot",6,2022-06-24
+ABY,24,NA,8.34,"Sunny,Clear,Hot,Not_enough_sun_for_clarity",7,2022-07-28
+BLH,15.5,5.1,7.75,"Sunny,Clear,Mild",5,2022-05-20
+BLH,19,NA,NA,"Hot, Clear, Not enough sun for clarity",6,2022-06-25
+BLH,25.8,NA,8.35,"Sunny,Clear,Hot,Not_enough_sun_for_clarity",7,2022-07-29
+DAG,18,NA,8.22,"Sunny,Cloudy,Hot,Not_enough_sun_for_clarity",6,2022-06-22
+HEK,14.6,6.8,8.23,"Sunny, Hot, Clear",5,2022-05-23
+HEK,17.5,8.57,8.26,"Sunny,Clear,Hot",6,2022-06-21
+HEK,23.8,NA,8.48,"Sunny,Clear,Hot,Not_enough_sun_for_clarity",7,2022-07-24
+NTS,13.2,5.75,8.15,"Sunny,Clear",5,2022-05-22
+NTS,14.7,7.69,8.27,"Sunny, Clear,Mild",6,2022-06-14
+NTS,25.5,6.6,8.4,"Sunny,Clear,Hot",7,2022-07-23
+PEP,16.1,5.77,8.01,"Sunny,Clear,Hot",5,2022-05-17
+PEP,17.2,7.17,8.25,"Sunny,Clear",6,2022-06-15
+PEP,25.3,7.42,8.45,"Sunny,Clear,Hot",7,2022-07-22
+PLQ,15,5.64,7.96,"Sunny, Hot, Clear",5,2022-05-25
+PLQ,18.5,NA,8.25,"Cloudy,Hot,Not_enough_sun_for_clarity",6,2022-06-26
+PLQ,24.1,6.9,8.45,"Sunny, Clear, Hot",7,2022-07-26
+PYR,12.4,5.33,8.03,"Sunny,Clear,Mild",5,2022-05-18
+PYR,18.2,7.6,8.23,"Sunny, Clear, Hot",6,2022-06-27
+PYR,23.1,NA,8.21,"Sunny, Cloudy, Hot",7,2022-07-27
+TAM,NA,3.48,NA,"Sunny,Clear",5,2022-05-03
+TAM,16.5,7.9,8.26,"Sunny,Cloudy,Clear,Hot",6,2022-06-20
+TAM,25.6,NA,8.55,"Cloudy,Hot,Not_enough_sun_for_clarity",7,2022-07-30
+DAG,15.6,6.3,7.71,"Sunny, Hot, Clear",5,2022-05-24
+ABY,NA,3.56,NA,"Sunny,Clear,Hot",5,2022-05-03
+ABY,18.2,8.1,8.22,"Sunny,Clear,Hot",6,2022-06-09
+ABY,23,6.3,8.37,"Sunny,Clear,Hot",7,2022-07-15
+ABY,22,NA,8.34,"Cloudy,Mild,Not_enough_sun_for_clarity",8,2022-08-01
+BLH,17,NA,8.17,"Cloudy,Not_enough_sun_for_clarity,Mild",6,2022-06-08
+BLH,22.8,NA,8.35,"Sunny,Clear,Hot,Not_enough_sun_for_clarity",7,2022-07-15
+DAG,15.5,4.15,8.12,"Sunny,Clear,Hot",5,2022-05-21
+DAG,19.9,NA,7.95,"Sunny,Clear,Hot,Not_enough_sun_for_clarity",6,2022-06-09
+DAG,22.2,5.91,8.28,"Sunny,Clear,Hot",7,2022-07-15
+DAG,24.1,NA,8.49,"Cloudy,Mild,Not_enough_sun_for_clarity",8,2022-08-02
+HEK,17.8,6.8,8.19,"Sunny,Clear,Hot",6,2022-06-09
+HEK,22.3,5.77,8.36,"Sunny,Clear,Hot",7,2022-07-15
+HEK,25.1,NA,8.49,"Cloudy,Mild,Not_enough_sun_for_clarity",8,2022-08-01
+NTS,NA,4.7,NA,"Sunny,Clear,Hot",5,2022-05-18
+NTS,16.2,NA,8.16,"Sunny,Clear,Hot,Not_enough_sun_for_clarity",6,2022-06-09
+NTS,23.5,4.97,8.4,"Sunny,Clear,Hot",7,2022-07-15
+NTS,24.6,NA,8.41,"Cloudy,Mild,Not_enough_sun_for_clarity",8,2022-08-01
+PEP,18.2,NA,8.24,"Cloudy,Mild,Not_enough_sun_for_clarity",6,2022-06-08
+PEP,24.3,6.16,8.4,"Sunny,Clear,Hot",7,2022-07-15
+PLQ,17.7,7.45,8.32,"Sunny,Clear,Hot",6,2022-06-08
+PLQ,23.3,6.18,8.33,"Sunny,Clear,Hot",7,2022-07-15
+PLQ,25.5,NA,8.45,"Cloudy,Mild,Not_enough_sun_for_clarity",8,2022-08-01
+PYR,NA,4.48,NA,"Sunny,Clear,Hot",5,2022-05-03
+PYR,21.8,6.23,8.32,"Sunny,Clear,Hot",7,2022-07-15
+PYR,23.2,NA,8.47,"Cloudy,Mild,Not_enough_sun_for_clarity",8,2022-08-02
+TAM,17,NA,8.16,"Cloudy,Mild,Not_enough_sun_for_clarity",6,2022-06-08
+TAM,22.1,NA,8.38,"Sunny,Clear,Not_enough_sun_for_clarity",7,2022-07-15
+PYR,16,5.93,8.22,"Sunny,Clear,Hot",6,2022-06-09
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
